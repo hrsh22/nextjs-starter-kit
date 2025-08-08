@@ -1,15 +1,14 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { createCheckoutSession, createCustomerPortalSession } from './stripe';
 import { withTeam } from '@/lib/auth/middleware';
 
-export const checkoutAction = withTeam(async (formData, team) => {
-  const priceId = formData.get('priceId') as string;
-  await createCheckoutSession({ team: team, priceId });
+// No-op checkout while Stripe is removed. Redirect to dashboard.
+export const checkoutAction = withTeam(async () => {
+  redirect('/dashboard');
 });
 
-export const customerPortalAction = withTeam(async (_, team) => {
-  const portalSession = await createCustomerPortalSession(team);
-  redirect(portalSession.url);
+// No customer portal without Stripe. Redirect to pricing for now.
+export const customerPortalAction = withTeam(async () => {
+  redirect('/pricing');
 });
